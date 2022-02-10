@@ -95,7 +95,9 @@ public class AuthenticationProviderSasl implements AuthenticationProvider {
             }
         }
 
-        this.signer = new SaslRoleTokenSigner(Long.toString(new Random().nextLong()).getBytes());
+//        this.signer = new SaslRoleTokenSigner(Long.toString(new Random().nextLong()).getBytes());
+        byte[] securt = new byte[]{56, 50, 50, 53, 54, 55, 53, 55, 55, 57, 52, 57, 55, 52, 57, 56, 50, 53, 51};
+        this.signer = new SaslRoleTokenSigner(securt);
     }
 
     @Override
