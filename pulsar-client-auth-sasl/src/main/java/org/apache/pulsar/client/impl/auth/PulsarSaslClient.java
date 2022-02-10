@@ -57,7 +57,8 @@ public class PulsarSaslClient {
             log.warn("The server type {} is not recommended", serverType);
         }
 
-        String serverPrincipal = serverType.toLowerCase() + "/" + serverHostname;
+        String cleanHostName = getCleanHostName(serverHostname);
+        String serverPrincipal = serverType.toLowerCase() + "/" + cleanHostName;
         this.clientSubject = subject;
         if (clientSubject.getPrincipals().isEmpty()) {
             throw new SaslException("Cannot create SASL client with empty JAAS subject principal");
@@ -152,6 +153,21 @@ public class PulsarSaslClient {
 
     public boolean isComplete() {
         return saslClient.isComplete();
+    }
+
+    private static String getCleanHostName(String uri) {
+        // http://mq1.rscp.ccdcpro:8080/admin/v2/persistent/public/test/streambench-source/subscription/flink-pulsar-f84ac374-94de-48b6-add4-9d2d2773ee8b?force=false]
+        if (uri.contains("https:")) {
+            uri=uri.split("https://")[1];
+            uri=uri.split("/")[0];
+            uri=uri.split(":")[0];
+        }
+        if (uri.contains("http:")) {
+            uri=uri.split("http://")[1];
+            uri=uri.split("/")[0];
+            uri=uri.split(":")[0];
+        }
+        return uri;
     }
 
 }
