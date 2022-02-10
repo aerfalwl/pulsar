@@ -2123,8 +2123,14 @@ public class ManagedLedgerImpl implements ManagedLedger, CreateCallback {
 
             advanceNonDurableCursors(ledgersToDelete);
 
+            PositionImpl currentLastConfirmedEntry = lastConfirmedEntry;
+
             // Update metadata
             for (LedgerInfo ls : ledgersToDelete) {
+                if (currentLastConfirmedEntry != null && ls.getLedgerId() == currentLastConfirmedEntry.getLedgerId()) {
+                    log.info("[{}] Ledger {} contains the current last confirmed entry {}, and it is going to be deleted", name,
+                            ls.getLedgerId(), currentLastConfirmedEntry);
+                }
                 ledgerCache.remove(ls.getLedgerId());
 
                 ledgers.remove(ls.getLedgerId());
